@@ -1,0 +1,16 @@
+emp_id,first_name,last_name,email,phone,department,salary,join_date
+1006,Jane,Brown,jane.brown@example.com,+91-8076786632,HR,1892095,2016-06-26
+1009,Alice,Williams,alice.williams@example.com,+91-9619829330,Finance,1644605,2022-11-13
+1005,Alice,Smith,alice.smith@example.com,+91-7180699047,Marketing,1369291,2024-05-24
+1001,John,Williams,john.williams@example.com,+91-8059311175,Engineering,333676,2018-11-02
+1006,,Brown,jane.brown@example.com,+91-8076786632,HR,1892095,2016-06-26
+1010,Bob,Johnson,bob.johnson@example.com,+91-7321825332,HR,716080,2025-04-24
+1009,Alice,Williams,alice.williams@example.com,,Finance,1644605,2022-11-13
+1007,Charlie,Johnson,charlie.johnson@example.com,+91-9587014348,Finance,682585,2020-08-07
+1003,Bob,Smith,bob.smith@example.com,+91-9137421597,Engineering,1787910,2022-06-26
+1008,Alice,Smith,alice.smith@example.com,+91-7057260374,HR,1006946,2024-11-12
+1003,Bob,Smith,bob.smith@example.com,,Engineering,1787910,2022-06-26
+1005,Alice,Smith,alice.smith@example.com,+91-7180699047,Marketing,1369291,2024-05-24
+1008,Alice,Smith,alice.smith@example.com,+91-7057260374,HR,1006946,2024-11-12
+1004,Jane,Williams,jane.williams@example.com,+91-9602995150,Sales,704774,2020-01-04
+1002,Diana,Doe,diana.doe@example.com,+91-9586088574,Finance,1256677,2023-01-02

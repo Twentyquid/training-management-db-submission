@@ -1,0 +1,41 @@
+# Compiled class files
+*.class
+
+# Maven target directory
+target/
+
+# Log files
+*.log
+
+# Eclipse IDE files
+/.classpath
+/.project
+/.settings/
+
+# IntelliJ IDEA files
+/.idea/
+/*.iml
+/out/
+
+# NetBeans IDE files
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+
+# Temporary or backup files
+*~
+*.swp
+*.bak
+*.tmp
