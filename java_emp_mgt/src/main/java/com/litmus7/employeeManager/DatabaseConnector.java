@@ -1,6 +1,8 @@
-package com.example;
+package com.litmus7.employeeManager;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.DriverManager;
 
 public class DatabaseConnector {
     private static final String URL = "jdbc:mysql://172.27.219.168:3306/l7Java?useSSL=false&allowPublicKeyRetrieval=true";
