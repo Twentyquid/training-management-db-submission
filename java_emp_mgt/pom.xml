@@ -19,7 +19,7 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.1.0</version>
             <configuration>
-                <mainClass>com.litmus7.employeeManager.Main</mainClass>
+                <mainClass>com.litmus7.employeeManager.ui.Main</mainClass>
             </configuration>
         </plugin>
     </plugins>

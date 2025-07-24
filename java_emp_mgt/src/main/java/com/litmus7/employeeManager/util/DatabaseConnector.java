@@ -1,4 +1,4 @@
-package com.litmus7.employeeManager;
+package com.litmus7.employeeManager.util;
 
 import java.sql.Connection;
 import java.sql.SQLException;
