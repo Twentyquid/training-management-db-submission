@@ -1,4 +1,5 @@
 package com.litmus7.employeeManager.ui;
+import com.litmus7.employeeManager.constant.StatusCodes;
 
 import java.util.Map;
 import com.litmus7.employeeManager.dto.Response;
@@ -10,7 +11,7 @@ public class Main {
        EmployeeManagerController file1 = new EmployeeManagerController();
 
        Response<Map<String, Integer>> result = file1.writeDataToDB(filePath);
-       if(result.isSuccess()) {
+       if(result.getStatusCode() == StatusCodes.SUCCESS) {
            System.out.println("Data processed successfully: " + result.getData());
        } else {
            System.out.println("Error: " + result.getMessage());

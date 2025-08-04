@@ -11,8 +11,12 @@ public class EmployeeManagerController {
         if (filepath == null || filepath.isEmpty()) {
             return Response.failure("File path cannot be null or empty");
         }
-        // Delegate the file processing to the service layer
-       return EmployeeManagerService.loadAndSaveCsvFile(filepath);
+        try {
+            Map<String, Integer> recordStats = EmployeeManagerService.loadAndSaveCsvFile(filepath);
+            return Response.success(recordStats);
+        } catch (Exception e) {
+            return Response.failure("Error processing file: " + e.getMessage());
+        }
     }
 
 }

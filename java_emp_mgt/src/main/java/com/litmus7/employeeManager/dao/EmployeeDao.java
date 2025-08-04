@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.litmus7.employeeManager.constant.Constants;
-import com.litmus7.employeeManager.dto.Response;
 import com.litmus7.employeeManager.dto.Employee;
 import java.util.List;
 import java.util.ArrayList;
@@ -31,29 +30,53 @@ public class EmployeeDao {
             return false;
         }
     }
-    public static Response<List<Employee>> getAllEmployees() {
+    public static List<Employee> getAllEmployees() {
         try (Connection conn = DatabaseConnector.getConnection()) {
             String selectQuery = Constants.GET_ALL_EMPLOYEES;
             try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
                 ResultSet rs = pstmt.executeQuery();
                 List<Employee> employees = new ArrayList<>();
                 while (rs.next()) {
-                    Employee emp = new Employee(
-                            rs.getInt("id"),
+                    Employee employee = new Employee(
+                            rs.getInt("emp_id"),
                             rs.getString("first_name"),
                             rs.getString("last_name"),
                             rs.getString("email"),
-                            rs.getString("phone_number"),
+                            rs.getString("phone"),
                             rs.getString("department"),
                             rs.getDouble("salary"),
                             rs.getDate("join_date")
                     );
-                    employees.add(emp);
+                    employees.add(employee);
                 }
-                return Response.success(employees);
+                return employees;
             }
         } catch (Exception e) {
-            return Response.failure("Error fetching employees: " + e.getMessage());
+            return null;
         }
     }
+    public static Employee getEmployeeById(int empId) {
+        try (Connection conn = DatabaseConnector.getConnection()) {
+            String selectQuery = Constants.SELECT_EMPLOYEE_BY_ID;
+            try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
+                pstmt.setInt(1, empId);
+                ResultSet rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    return new Employee(
+                            rs.getInt("emp_id"),
+                            rs.getString("first_name"),
+                            rs.getString("last_name"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("department"),
+                            rs.getDouble("salary"),
+                            rs.getDate("join_date")
+                    );
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }   
 }

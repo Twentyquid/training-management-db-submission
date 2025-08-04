@@ -1,14 +1,15 @@
 package com.litmus7.employeeManager.dto;
+import com.litmus7.employeeManager.constant.StatusCodes;
 
 public class Response<T> {
     private String message;
     private T data;
-    private boolean success;
+    private int statusCode;
 
-    public Response(String message, T data, boolean success) {
+    public Response(String message, T data, int statusCode) {
         this.message = message;
         this.data = data;
-        this.success = success;
+        this.statusCode = statusCode;
     }
 
     public String getMessage() {
@@ -20,16 +21,16 @@ public class Response<T> {
         return data;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public int getStatusCode() {
+        return statusCode;
     }
 
     
     public static <T> Response<T> success(T data) {
-        return new Response<>("Operation successful", data, true);
+        return new Response<>("Operation successful", data, StatusCodes.SUCCESS);
     }
 
     public static <T> Response<T> failure(String message) {
-        return new Response<>(message, null, false);
+        return new Response<>(message, null, StatusCodes.FAILURE);
     }
 }
