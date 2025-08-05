@@ -7,11 +7,13 @@ import java.sql.ResultSet;
 
 import com.litmus7.employeeManager.constant.Constants;
 import com.litmus7.employeeManager.dto.Employee;
+import com.litmus7.employeeManager.exception.EmployeeDaoException;
+
 import java.util.List;
 import java.util.ArrayList;
 
 public class EmployeeDao {
-    public static boolean saveEmployee(String[] row) {
+    public static boolean saveEmployee(String[] row) throws EmployeeDaoException {
         try (Connection conn = DatabaseConnector.getConnection()) {
             String insertQuery = Constants.INSERT_EMPLOYEE;
             try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
@@ -27,10 +29,10 @@ public class EmployeeDao {
             }
             
         } catch (Exception e) {
-            return false;
+            throw new EmployeeDaoException("Error saving employee: " + e.getMessage(), e);
         }
     }
-    public static List<Employee> getAllEmployees() {
+    public static List<Employee> getAllEmployees() throws EmployeeDaoException {
         try (Connection conn = DatabaseConnector.getConnection()) {
             String selectQuery = Constants.GET_ALL_EMPLOYEES;
             try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
@@ -52,10 +54,10 @@ public class EmployeeDao {
                 return employees;
             }
         } catch (Exception e) {
-            return null;
+            throw new EmployeeDaoException("Error fetching employees: " + e.getMessage(), e);
         }
     }
-    public static Employee getEmployeeById(int empId) {
+    public static Employee getEmployeeById(int empId) throws EmployeeDaoException {
         try (Connection conn = DatabaseConnector.getConnection()) {
             String selectQuery = Constants.SELECT_EMPLOYEE_BY_ID;
             try (PreparedStatement pstmt = conn.prepareStatement(selectQuery)) {
@@ -75,7 +77,7 @@ public class EmployeeDao {
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new EmployeeDaoException("Error fetching employee by ID: " + e.getMessage(), e);
         }
         return null;
     }   
