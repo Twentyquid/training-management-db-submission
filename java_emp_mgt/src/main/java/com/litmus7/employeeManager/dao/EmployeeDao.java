@@ -1,4 +1,5 @@
 package com.litmus7.employeeManager.dao;
+
 import com.litmus7.employeeManager.util.DatabaseConnector;
 import java.sql.Connection;
 import java.sql.Date;
@@ -27,11 +28,31 @@ public class EmployeeDao {
                 pstmt.setDate(8, Date.valueOf(row[7]));
                 return pstmt.executeUpdate() > 0;
             }
-            
+
         } catch (Exception e) {
             throw new EmployeeDaoException("Error saving employee: " + e.getMessage(), e);
         }
     }
+
+    public static boolean saveEmployee(Employee employee) throws EmployeeDaoException {
+        try (Connection conn = DatabaseConnector.getConnection()) {
+            String insertQuery = Constants.INSERT_EMPLOYEE;
+            try (PreparedStatement pstmt = conn.prepareStatement(insertQuery)) {
+                pstmt.setInt(1, employee.getId());
+                pstmt.setString(2, employee.getFirstName());
+                pstmt.setString(3, employee.getLastName());
+                pstmt.setString(4, employee.getEmail());
+                pstmt.setString(5, employee.getPhoneNumber());
+                pstmt.setString(6, employee.getDepartment());
+                pstmt.setDouble(7, employee.getSalary());
+                pstmt.setDate(8, new Date(employee.getJoinDate().getTime()));
+                return pstmt.executeUpdate() > 0;
+            }
+        } catch (Exception e) {
+            throw new EmployeeDaoException("Error saving employee: " + e.getMessage(), e);
+        }
+    }
+
     public static List<Employee> getAllEmployees() throws EmployeeDaoException {
         try (Connection conn = DatabaseConnector.getConnection()) {
             String selectQuery = Constants.GET_ALL_EMPLOYEES;
@@ -47,8 +68,7 @@ public class EmployeeDao {
                             rs.getString("phone"),
                             rs.getString("department"),
                             rs.getDouble("salary"),
-                            rs.getDate("join_date")
-                    );
+                            rs.getDate("join_date"));
                     employees.add(employee);
                 }
                 return employees;
@@ -57,6 +77,7 @@ public class EmployeeDao {
             throw new EmployeeDaoException("Error fetching employees: " + e.getMessage(), e);
         }
     }
+
     public static Employee getEmployeeById(int empId) throws EmployeeDaoException {
         try (Connection conn = DatabaseConnector.getConnection()) {
             String selectQuery = Constants.SELECT_EMPLOYEE_BY_ID;
@@ -72,13 +93,45 @@ public class EmployeeDao {
                             rs.getString("phone"),
                             rs.getString("department"),
                             rs.getDouble("salary"),
-                            rs.getDate("join_date")
-                    );
+                            rs.getDate("join_date"));
                 }
             }
         } catch (Exception e) {
             throw new EmployeeDaoException("Error fetching employee by ID: " + e.getMessage(), e);
         }
         return null;
-    }   
+    }
+
+    public static boolean deleteEmployeeById(int empId) throws EmployeeDaoException {
+        try (Connection conn = DatabaseConnector.getConnection()) {
+            String deleteQuery = Constants.DELETE_EMPLOYEE_BY_ID;
+            try (PreparedStatement pstmt = conn.prepareStatement(deleteQuery)) {
+                pstmt.setInt(1, empId);
+                return pstmt.executeUpdate() > 0;
+            }
+        } catch (Exception e) {
+            throw new EmployeeDaoException("Error deleting employee: " + e.getMessage(), e);
+        }
+    }
+
+    public static boolean updateEmployee(Employee employee) throws EmployeeDaoException {
+        if (employee == null) {
+            throw new EmployeeDaoException("Employee object is null", null);
+        }
+        String sql = "UPDATE employees SET first_name = ?, last_name = ?, email = ?, phone = ?, department = ?, salary = ?, join_date = ? WHERE emp_id = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, employee.getFirstName());
+            pstmt.setString(2, employee.getLastName());
+            pstmt.setString(3, employee.getEmail());
+            pstmt.setString(4, employee.getPhoneNumber());
+            pstmt.setString(5, employee.getDepartment());
+            pstmt.setDouble(6, employee.getSalary());
+            pstmt.setDate(7, new Date(employee.getJoinDate().getTime()));
+            pstmt.setInt(8, employee.getId());
+            return pstmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            throw new EmployeeDaoException("Error updating employee: " + e.getMessage(), e);
+        }
+    }
 }

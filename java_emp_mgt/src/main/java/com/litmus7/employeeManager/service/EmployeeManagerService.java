@@ -56,11 +56,46 @@ public class EmployeeManagerService {
         return recordStats;
     }
 
+    public static boolean saveEmployee(Employee employee) throws EmployeeServiceException {
+        if (employee == null) {
+            throw new EmployeeServiceException("Invalid employee data", null);
+        }
+        try {
+            return EmployeeDao.saveEmployee(employee);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Error saving employee: " + e.getMessage(), e);
+        }
+    }
+
     public static List<Employee> getAllEmployees() throws EmployeeServiceException {
         try {
             return EmployeeDao.getAllEmployees();
         } catch (EmployeeDaoException e) {
             throw new EmployeeServiceException("Error fetching employees: " + e.getMessage(), e);
+        }
+    }
+
+    public static Employee getEmployeeById(int empId) throws EmployeeServiceException {
+        try {
+            return EmployeeDao.getEmployeeById(empId);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Error fetching employee by ID: " + e.getMessage(), e);
+        }
+    }
+
+    public static boolean deleteEmployeeById(int empId) throws EmployeeServiceException {
+        try {
+            return EmployeeDao.deleteEmployeeById(empId);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Error deleting employee by ID: " + e.getMessage(), e);
+        }
+    }
+
+    public static boolean updateEmployee(Employee employee) throws EmployeeServiceException {
+        try {
+            return EmployeeDao.updateEmployee(employee);
+        } catch (EmployeeDaoException e) {
+            throw new EmployeeServiceException("Error updating employee: " + e.getMessage(), e);
         }
     }
 }
