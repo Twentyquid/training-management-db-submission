@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.litmus7.employeeManager.constant.Constants;
 import com.litmus7.employeeManager.dto.Employee;
@@ -132,6 +133,98 @@ public class EmployeeDao {
             return pstmt.executeUpdate() > 0;
         } catch (Exception e) {
             throw new EmployeeDaoException("Error updating employee: " + e.getMessage(), e);
+        }
+    }
+
+    public static boolean addEmployeesInBatch(List<Employee> employeeList) throws EmployeeDaoException {
+        if (employeeList == null || employeeList.isEmpty()) {
+            throw new EmployeeDaoException("Employee list is null or empty", null);
+        }
+        Connection conn = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            try (PreparedStatement pstmt = conn.prepareStatement(Constants.INSERT_EMPLOYEE)) {
+                conn.setAutoCommit(false);
+                for (Employee employee : employeeList) {
+                    pstmt.setInt(1, employee.getId());
+                    pstmt.setString(2, employee.getFirstName());
+                    pstmt.setString(3, employee.getLastName());
+                    pstmt.setString(4, employee.getEmail());
+                    pstmt.setString(5, employee.getPhoneNumber());
+                    pstmt.setString(6, employee.getDepartment());
+                    pstmt.setDouble(7, employee.getSalary());
+                    pstmt.setDate(8, new Date(employee.getJoinDate().getTime()));
+                    pstmt.addBatch();
+                }
+                int[] results = pstmt.executeBatch();
+                conn.commit();
+                return results.length == employeeList.size();
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new EmployeeDaoException("Error rolling back transaction: " + ex.getMessage(), ex);
+                }
+            }
+            throw new EmployeeDaoException("Error adding employees in batch: " + e.getMessage(), e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException ex) {
+                    throw new EmployeeDaoException("Error closing connection: " + ex.getMessage(), ex);
+                }
+            }
+        }
+    }
+
+    public static boolean transferEmployeesToDepartment(List<Integer> employeeIds, String newDepartment)
+            throws EmployeeDaoException {
+        if (employeeIds == null || employeeIds.isEmpty() || newDepartment == null) {
+            throw new EmployeeDaoException("Employee IDs or new department is null/empty", null);
+        }
+        Connection conn = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            String sql = Constants.UPDATE_DEPARTMENT;
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                conn.setAutoCommit(false);
+                for (Integer empId : employeeIds) {
+                    pstmt.setString(1, newDepartment);
+                    pstmt.setInt(2, empId);
+                    pstmt.addBatch();
+                }
+                int[] results = pstmt.executeBatch();
+                for (int res : results) {
+                    if (res == PreparedStatement.EXECUTE_FAILED) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+                conn.commit();
+                return true;
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new EmployeeDaoException("Error rolling back transaction: " + ex.getMessage(), ex);
+                }
+            }
+            throw new EmployeeDaoException("Error transferring employees to department: " + e.getMessage(), e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException ex) {
+                    throw new EmployeeDaoException("Error closing connection: " + ex.getMessage(), ex);
+                }
+            }
         }
     }
 }

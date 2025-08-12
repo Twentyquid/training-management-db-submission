@@ -60,6 +60,23 @@ public class Main {
         } else {
             System.out.println("Error deleting employee: " + deleteResponse.getMessage());
         }
+
+        // Create a list of Employee with dummy data
+        List<Employee> employeeList = List.of(
+                new Employee(201, "Alice", "Smith", "alice.smith@example.com", "1112223333", "HR", 50000.0,
+                        new java.sql.Date(System.currentTimeMillis())),
+                new Employee(202, "Bob", "Johnson", "bob.johnson@example.com", "2223334444", "Finance", 55000.0,
+                        new java.sql.Date(System.currentTimeMillis())),
+                new Employee(203, "Charlie", "Williams", "charlie.williams@example.com", "3334445555", "IT", 60000.0,
+                        new java.sql.Date(System.currentTimeMillis())));
+
+        // Call addEmployeesInBatch from the controller
+        Response<Boolean> batchResponse = EmployeeManagerController.addEmployeesInBatch(employeeList);
+        if (batchResponse.getStatusCode() == StatusCodes.SUCCESS && batchResponse.getData()) {
+            System.out.println("Employees added in batch successfully.");
+        } else {
+            System.out.println("Error adding employees in batch: " + batchResponse.getMessage());
+        }
     }
 
 }

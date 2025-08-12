@@ -88,4 +88,35 @@ public class EmployeeManagerController {
         }
     }
 
+    public static Response<Boolean> addEmployeesInBatch(List<Employee> employeeList) {
+        if (employeeList == null || employeeList.isEmpty()) {
+            return Response.failure("Employee list cannot be null or empty");
+        }
+        try {
+            boolean isAdded = EmployeeManagerService.addEmployeesInBatch(employeeList);
+            return isAdded ? Response.success(true) : Response.failure("Failed to add employees in batch");
+        } catch (EmployeeServiceException e) {
+            return Response.failure("Error adding employees in batch: " + e.getMessage());
+        } catch (Exception e) {
+            return Response.failure("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
+    public static Response<Boolean> transferEmployeesToDepartment(List<Integer> employeeIds, String targetDepartment) {
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            return Response.failure("Employee IDs list cannot be null or empty");
+        }
+        if (targetDepartment == null || targetDepartment.trim().isEmpty()) {
+            return Response.failure("Invalid target department");
+        }
+        try {
+            boolean isTransferred = EmployeeManagerService.transferEmployeesToDepartment(employeeIds, targetDepartment);
+            return isTransferred ? Response.success(true) : Response.failure("Failed to transfer employees");
+        } catch (EmployeeServiceException e) {
+            return Response.failure("Error transferring employees: " + e.getMessage());
+        } catch (Exception e) {
+            return Response.failure("An unexpected error occurred: " + e.getMessage());
+        }
+    }
+
 }

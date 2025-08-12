@@ -16,8 +16,12 @@ import com.litmus7.employeeManager.exception.EmployeeServiceException;
 import com.litmus7.employeeManager.helper.EmployeeHelper;
 import com.litmus7.employeeManager.util.ReadCSVFile;
 // import com.opencsv.exceptions.CsvException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EmployeeManagerService {
+
+    private static final Logger logger = LogManager.getLogger(EmployeeManagerService.class);
 
     public static Map<String, Integer> loadAndSaveCsvFile(String filePath) throws EmployeeServiceException {
         if (!filePath.toLowerCase().endsWith(".csv")) {
@@ -31,6 +35,7 @@ public class EmployeeManagerService {
         try {
             data = ReadCSVFile.readCSV(filePath);
         } catch (Exception e) {
+            logger.error("Error reading CSV file: {}", e.getMessage(), e);
             throw new EmployeeServiceException("Error reading CSV file: " + e.getMessage(), e);
         }
         // } catch (IOException e) {
@@ -58,11 +63,13 @@ public class EmployeeManagerService {
 
     public static boolean saveEmployee(Employee employee) throws EmployeeServiceException {
         if (employee == null) {
+            logger.error("Invalid employee data: Employee object is null");
             throw new EmployeeServiceException("Invalid employee data", null);
         }
         try {
             return EmployeeDao.saveEmployee(employee);
         } catch (EmployeeDaoException e) {
+            logger.error("Error saving employee: {}", e.getMessage(), e);
             throw new EmployeeServiceException("Error saving employee: " + e.getMessage(), e);
         }
     }
@@ -71,6 +78,7 @@ public class EmployeeManagerService {
         try {
             return EmployeeDao.getAllEmployees();
         } catch (EmployeeDaoException e) {
+            logger.error("Error fetching employees: {}", e.getMessage(), e);
             throw new EmployeeServiceException("Error fetching employees: " + e.getMessage(), e);
         }
     }
@@ -79,6 +87,7 @@ public class EmployeeManagerService {
         try {
             return EmployeeDao.getEmployeeById(empId);
         } catch (EmployeeDaoException e) {
+            logger.error("Error fetching employee by ID: {}", e.getMessage(), e);
             throw new EmployeeServiceException("Error fetching employee by ID: " + e.getMessage(), e);
         }
     }
@@ -87,6 +96,7 @@ public class EmployeeManagerService {
         try {
             return EmployeeDao.deleteEmployeeById(empId);
         } catch (EmployeeDaoException e) {
+            logger.error("Error deleting employee by ID: {}", e.getMessage(), e);
             throw new EmployeeServiceException("Error deleting employee by ID: " + e.getMessage(), e);
         }
     }
@@ -95,7 +105,32 @@ public class EmployeeManagerService {
         try {
             return EmployeeDao.updateEmployee(employee);
         } catch (EmployeeDaoException e) {
+            logger.error("Error updating employee: {}", e.getMessage(), e);
             throw new EmployeeServiceException("Error updating employee: " + e.getMessage(), e);
+        }
+    }
+
+    public static boolean addEmployeesInBatch(List<Employee> employeeList) throws EmployeeServiceException {
+        if (employeeList == null || employeeList.isEmpty()) {
+            logger.error("Employee list is null or empty");
+            throw new EmployeeServiceException("Employee list is null or empty", null);
+        }
+        try {
+            return EmployeeDao.addEmployeesInBatch(employeeList);
+        } catch (EmployeeDaoException e) {
+            logger.error("Error adding employees in batch: {}", e.getMessage(), e);
+            throw new EmployeeServiceException("Error adding employees in batch: " + e.getMessage(), e);
+        }
+    }
+
+    // Calls transferEmployeesToDepartment and handles exceptions
+    public static boolean transferEmployeesToDepartment(List<Integer> employeeIds, String targetDepartmentId)
+            throws EmployeeServiceException {
+        try {
+            return EmployeeDao.transferEmployeesToDepartment(employeeIds, targetDepartmentId);
+        } catch (EmployeeDaoException e) {
+            logger.error("Error transferring employees to department: {}", e.getMessage(), e);
+            throw new EmployeeServiceException("Error transferring employees to department: " + e.getMessage(), e);
         }
     }
 }
